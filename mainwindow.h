@@ -7,6 +7,7 @@
 #include <QDial>
 #include <QLineEdit>
 #include <QProgressBar>
+#include <Qt>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,9 +26,9 @@ public slots:
     //general
     void activacion(Qt::CheckState check);
     void UpdateTanks();
-    void check_qouts(double tv, int max, QDial *dial);
+    void check_qouts(double tv, double max, QDial *dial);
     void check_qins(double tv, int max, QDial *dial);
-    bool check_tank(int max, double tv, const Qt::CheckState check);
+    bool check_tank(int max, double tv, Qt::CheckState check);
     void convertion(QString text, QLineEdit *line);
     void update_clines(QString text, QProgressBar *t);
     void update_qlines(QString text, QDial *d);

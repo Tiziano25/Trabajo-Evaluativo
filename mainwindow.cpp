@@ -102,7 +102,7 @@ void MainWindow::activacion(Qt::CheckState check)
 {
     if(check==2)
     {
-        timer.start(1000);
+        timer.start(100);
         ui->capacity1->setReadOnly(true);
 
         ui->q1_max->setReadOnly(true);
@@ -132,8 +132,8 @@ void MainWindow::activacion(Qt::CheckState check)
 void MainWindow::UpdateTanks()
 {
     //tanque principal
-    double qin1 = ui->q1->value()/3600.0;
-    double qout1 = ui->q2->value()/3600.0;
+    double qin1 = ui->q1->value()/36000.0;
+    double qout1 = ui->q2->value()/36000.0;
     tank_value1 = tank_value1 + qin1 - qout1;
     ui->tank1->setValue(tank_value1);
     check_qouts(tank_value1, ui->tank1->maximum(), ui->q2);
@@ -163,8 +163,8 @@ void MainWindow::UpdateTanks()
     {
         if(enabledtank2 == true)
         {
-            qin2 = qout1/2;
-            qin3 = qout1/2;
+            qin2 = qout1/2.0;
+            qin3 = qout1/2.0;
         }
         else
         {
@@ -174,8 +174,8 @@ void MainWindow::UpdateTanks()
             qin3 = 0;
         }
     }
-    double qout2 = ui->q3->value()/3600;
-    double qout3 = ui->q4->value()/3600;
+    double qout2 = ui->q3->value()/36000.0;
+    double qout3 = ui->q4->value()/36000.0;
     tank_value2 = tank_value2 + qin2 - qout2;
     tank_value3 = tank_value3 + qin3 - qout3;
     ui->tank2->setValue(tank_value2);
@@ -183,9 +183,9 @@ void MainWindow::UpdateTanks()
     check_qouts(tank_value2,ui->tank2->maximum(),ui->q3);
     check_qouts(tank_value3,ui->tank3->maximum(),ui->q4);
 }
-void MainWindow::check_qouts(double tv, int max, QDial *dial)
+void MainWindow::check_qouts(double tv, double max, QDial *dial)
 {
-    if(tv <= (max*0.1))
+    if(tv < (max*0.1))
     {
         dial->setEnabled(false);
         dial->setValue(0);
@@ -207,7 +207,7 @@ void MainWindow::check_qins(double tv, int max, QDial *dial)
         dial->setEnabled(true);
     }
 }
-bool MainWindow::check_tank(int max, double tv, const Qt::CheckState check)
+bool MainWindow::check_tank(int max, double tv, Qt::CheckState check)
 {
     if(check == 2 && tv < max)
     {
