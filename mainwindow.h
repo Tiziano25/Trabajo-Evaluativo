@@ -7,7 +7,10 @@
 #include <QDial>
 #include <QLineEdit>
 #include <QProgressBar>
-#include <Qt>
+#include <QDebug>
+#include <QStyleFactory>
+#include <QFileDialog>
+#include <QDataStream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +35,7 @@ public slots:
     void convertion(QString text, QLineEdit *line);
     void update_clines(QString text, QProgressBar *t);
     void update_qlines(QString text, QDial *d);
+    double isoverflow(int max, double tv);
 
     //prueba
     void TestTimer();
@@ -60,11 +64,15 @@ public slots:
     void update_q3_max();
     void update_q4_max();
 
+   /* //Upper buttons
+    void menu_save();
+    void menu_save_as();*/
 private:
     Ui::MainWindow *ui;
     QTimer timer;
     double tank_value1;
     double tank_value2;
     double tank_value3;
+    QString CurFile;
 };
 #endif // MAINWINDOW_H

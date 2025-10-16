@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
-#include <QStyleFactory>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -91,6 +89,12 @@ MainWindow::MainWindow(QWidget *parent)
             SIGNAL(editingFinished()),
             this,
             SLOT(update_q4_max()));
+
+    //Upper buttons
+    connect(ui->actionSave_as,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(menu_save_as()));
 }
 
 MainWindow::~MainWindow()
@@ -180,6 +184,8 @@ void MainWindow::UpdateTanks()
     tank_value3 = tank_value3 + qin3 - qout3;
     ui->tank2->setValue(tank_value2);
     ui->tank3->setValue(tank_value3);
+    tank_value2 = isoverflow(ui->tank2->maximum(), tank_value2);
+    tank_value3 = isoverflow(ui->tank3->maximum(), tank_value3);
     check_qouts(tank_value2,ui->tank2->maximum(),ui->q3);
     check_qouts(tank_value3,ui->tank3->maximum(),ui->q4);
 }
@@ -197,10 +203,12 @@ void MainWindow::check_qouts(double tv, double max, QDial *dial)
 }
 void MainWindow::check_qins(double tv, int max, QDial *dial)
 {
+    tv = isoverflow(max, tv);
     if(tv == max)
     {
         dial->setEnabled(false);
         dial->setValue(0);
+        ui->tank1->setValue(tank_value1);
     }
     else
     {
@@ -233,6 +241,18 @@ void MainWindow::update_clines(QString text, QProgressBar *t)
 void MainWindow::update_qlines(QString text, QDial *d)
 {
     d->setMaximum(text.toInt());
+}
+double MainWindow::isoverflow(int max, double tv)
+{
+    if(tv >= max)
+    {
+        tv = max;
+        return tv;
+    }
+    else
+    {
+        return tv;
+    }
 }
 
 //Prueba
@@ -319,3 +339,33 @@ void MainWindow::update_q4_max()
     update_qlines(ui->q4_max->text(), ui->q4);
 }
 
+/*//Upper buttons
+void MainWindow::menu_save()
+{
+    if(filename.isEmpty())
+    {
+        menu_save_as();
+    }
+
+    QFile file(CurFile);
+    if(file.open(QFile::WriteOnly))
+    {
+        QDataStream code(&file);
+
+    }
+}
+
+void MainWindow::menu_save_as()
+{
+    QString filename = QFileDialog::getSaveFileName(this, "Save File as", "", "Text Files (*.dat);;All files (*.*)");
+    if(!filename.isEmpty())
+    {
+        curFile = filename;
+        saveFile();
+    }
+    else
+    {
+        menu_save_as();
+    }
+}
+*/
