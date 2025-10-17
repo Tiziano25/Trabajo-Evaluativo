@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     tank_value1 = 0.0;
     tank_value2 = 0.0;
     tank_value3 = 0.0;
+
     //Boton de Activación
     connect(ui->start,
             SIGNAL(checkStateChanged(Qt::CheckState)),
@@ -91,10 +92,18 @@ MainWindow::MainWindow(QWidget *parent)
             SLOT(update_q4_max()));
 
     //Upper buttons
+    connect(ui->actionSave,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(save_file()));
     connect(ui->actionSave_as,
             SIGNAL(triggered(bool)),
             this,
-            SLOT(menu_save_as()));
+            SLOT(save_file_as()));
+    connect(ui->actionOpen_1,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(open_file()));
 }
 
 MainWindow::~MainWindow()
@@ -339,33 +348,157 @@ void MainWindow::update_q4_max()
     update_qlines(ui->q4_max->text(), ui->q4);
 }
 
-/*//Upper buttons
-void MainWindow::menu_save()
+//Upper buttons
+void MainWindow::save_file()
 {
-    if(filename.isEmpty())
+    timer.stop();
+    if(curFile.isEmpty())
     {
-        menu_save_as();
+        save_file_as();
     }
 
-    QFile file(CurFile);
+    QFile file(curFile);
     if(file.open(QFile::WriteOnly))
     {
         QDataStream code(&file);
+        CheckBoxs.append(ui->start);
+        CheckBoxs.append(ui->enable_t2);
+        CheckBoxs.append(ui->enable_t3);
+        for(int i = 0 ; i < 3 ; i++)
+        {
+            code << CheckBoxs[i]->isChecked();
+        }
 
+        tanks.append(ui->tank1);
+        tanks.append(ui->tank2);
+        tanks.append(ui->tank3);
+        for(int i = 0 ; i < 3 ; i++)
+        {
+            code << tanks[i]->maximum();
+            code << tanks[i]->value();
+        }
+        dials.append(ui->q1);
+        dials.append(ui->q2);
+        dials.append(ui->q3);
+        dials.append(ui->q4);
+        for(int i = 0 ; i < 4 ; i++)
+        {
+            code << dials[i]->maximum();
+            code << dials[i]->value();
+        }
+
+        lines.append(ui->capacity1);
+        lines.append(ui->capacity2);
+        lines.append(ui->capacity3);
+        lines.append(ui->q1_max);
+        lines.append(ui->q2_max);
+        lines.append(ui->q3_max);
+        lines.append(ui->q4_max);
+        for(int i = 0 ; i < 7 ; i++)
+        {
+            code << lines[i]->text();
+        }
+        file.close();
     }
+    timer.start(100);
 }
 
-void MainWindow::menu_save_as()
+void MainWindow::save_file_as()
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Save File as", "", "Text Files (*.dat);;All files (*.*)");
+    timer.stop();
+    QString filename = QFileDialog::getSaveFileName(this, "Save File as", "", "Dat Files (*.dat);;All files (*.*)");
     if(!filename.isEmpty())
     {
         curFile = filename;
-        saveFile();
+        save_file();
     }
-    else
+    timer.start(100);
+}
+
+void MainWindow::open_file()
+{
+    curFile = QFileDialog::getOpenFileName(this,"Open File", "", "Dat Files (*.dat);;All files (*.*)");
+    QFile file(curFile);
+    if(file.open(QFile::ReadOnly))
     {
-        menu_save_as();
+        QDataStream code(&file);
+        bool ch1;
+        bool ch2;
+        bool ch3;
+        code>> ch1
+            >> ch2
+            >> ch3;
+        int t1_max;
+        int t1;
+        int t2_max;
+        int t2;
+        int t3_max;
+        int t3;
+        code>> t1_max
+            >> t1
+            >> t2_max
+            >> t2
+            >> t3_max
+            >> t3;
+        int d1_max;
+        int d1;
+        int d2_max;
+        int d2;
+        int d3_max;
+        int d3;
+        int d4_max;
+        int d4;
+        code>> d1_max
+            >> d1
+            >> d2_max
+            >> d2
+            >> d3_max
+            >> d3
+            >> d4_max
+            >> d4;
+        QString l1;
+        QString l2;
+        QString l3;
+        QString l4;
+        QString l5;
+        QString l6;
+        QString l7;
+        code>> l1
+            >> l2
+            >> l3
+            >> l4
+            >> l5
+            >> l6
+            >> l7;
+
+        tank_value1 = t1*1.0;
+        tank_value2 = t2*1.0;
+        tank_value3 = t3*1.0;
+        ui->start->setChecked(ch1);
+        ui->enable_t2->setChecked(ch2);
+        ui->enable_t3->setChecked(ch3);
+        ui->tank1->setMaximum(t1_max);
+        ui->tank1->setValue(tank_value1);
+        ui->tank2->setMaximum(t2_max);
+        ui->tank2->setValue(tank_value2);
+        ui->tank3->setMaximum(t3_max);
+        ui->tank3->setValue(tank_value3);
+        ui->q1->setMaximum(d1_max);
+        ui->q1->setValue(d1);
+        ui->q2->setMaximum(d2_max);
+        ui->q2->setValue(d2);
+        ui->q3->setMaximum(d3_max);
+        ui->q3->setValue(d3);
+        ui->q4->setMaximum(d4_max);
+        ui->q4->setValue(d4);
+        ui->capacity1->setText(l1);
+        ui->capacity2->setText(l2);
+        ui->capacity3->setText(l3);
+        ui->q1_max->setText(l4);
+        ui->q2_max->setText(l5);
+        ui->q3_max->setText(l6);
+        ui->q4_max->setText(l7);
+        file.close();
     }
 }
-*/
+

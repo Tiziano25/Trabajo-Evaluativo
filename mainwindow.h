@@ -7,10 +7,12 @@
 #include <QDial>
 #include <QLineEdit>
 #include <QProgressBar>
+#include <QCheckBox>
 #include <QDebug>
 #include <QStyleFactory>
 #include <QFileDialog>
 #include <QDataStream>
+#include <QList>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -64,15 +66,20 @@ public slots:
     void update_q3_max();
     void update_q4_max();
 
-   /* //Upper buttons
-    void menu_save();
-    void menu_save_as();*/
+    //Upper buttons
+    void save_file();
+    void save_file_as();
+    void open_file();
 private:
     Ui::MainWindow *ui;
     QTimer timer;
     double tank_value1;
     double tank_value2;
     double tank_value3;
-    QString CurFile;
+    QList<QProgressBar *> tanks;
+    QList<QDial *> dials;
+    QList<QLineEdit *> lines;
+    QList<QCheckBox *> CheckBoxs;
+    QString curFile;
 };
 #endif // MAINWINDOW_H
