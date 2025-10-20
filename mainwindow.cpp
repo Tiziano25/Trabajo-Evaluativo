@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     tank_value2 = 0.0;
     tank_value3 = 0.0;
 
-    //Boton de Activación
+    //General
     connect(ui->start,
             SIGNAL(checkStateChanged(Qt::CheckState)),
             this,
@@ -20,7 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
             SIGNAL(timeout()),
             this,
             SLOT(UpdateTanks()));
-
+    //Hacer despues
+    /*connect(ui->tank1,
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(change_tank_status(int)));*/
     //LCDs
     connect(ui->q1,
             SIGNAL(valueChanged(int)),
@@ -100,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent)
             SIGNAL(triggered(bool)),
             this,
             SLOT(save_file_as()));
-    connect(ui->actionOpen_1,
+    connect(ui->actionOpen_File1,
             SIGNAL(triggered(bool)),
             this,
             SLOT(open_file()));
@@ -115,8 +119,13 @@ void MainWindow::activacion(Qt::CheckState check)
 {
     if(check==2)
     {
+        ui->start->setText("Parar");
         timer.start(100);
         ui->capacity1->setReadOnly(true);
+        ui->actionOpen_file->setChecked(true);
+        if(ui->actionOpen_file->isChecked() == true){
+            ui->tank1->setValue(100);
+        }
 
         ui->q1_max->setReadOnly(true);
         ui->q1->setEnabled(true);
@@ -129,6 +138,7 @@ void MainWindow::activacion(Qt::CheckState check)
     }
     else if(check==0)
     {
+        ui->start->setText("Arranque");
         timer.stop();
         ui->capacity1->setReadOnly(false);
 
@@ -217,7 +227,7 @@ void MainWindow::check_qins(double tv, int max, QDial *dial)
     {
         dial->setEnabled(false);
         dial->setValue(0);
-        ui->tank1->setValue(tank_value1);
+        ui->tank1->setValue(tv);
     }
     else
     {
@@ -263,6 +273,11 @@ double MainWindow::isoverflow(int max, double tv)
         return tv;
     }
 }
+
+/*void MainWindow::change_tank_status(int v)
+{
+
+}*/
 
 //Prueba
 void MainWindow::TestTimer()
@@ -351,7 +366,6 @@ void MainWindow::update_q4_max()
 //Upper buttons
 void MainWindow::save_file()
 {
-    timer.stop();
     if(curFile.isEmpty())
     {
         save_file_as();
@@ -400,7 +414,6 @@ void MainWindow::save_file()
         }
         file.close();
     }
-    timer.start(100);
 }
 
 void MainWindow::save_file_as()
