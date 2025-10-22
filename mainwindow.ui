@@ -642,6 +642,12 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>Ej: 1000</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -715,8 +721,14 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>Ej: 1000</string>
             </property>
            </widget>
           </item>
@@ -833,6 +845,12 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>Ej: 1000</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -903,8 +921,14 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
             <property name="readOnly">
              <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>Ej: 1000</string>
             </property>
            </widget>
           </item>

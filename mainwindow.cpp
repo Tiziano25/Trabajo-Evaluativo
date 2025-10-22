@@ -20,11 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
             SIGNAL(timeout()),
             this,
             SLOT(UpdateTanks()));
-    //Hacer despues
-    /*connect(ui->tank1,
-            SIGNAL(valueChanged(int)),
-            this,
-            SLOT(change_tank_status(int)));*/
     //LCDs
     connect(ui->q1,
             SIGNAL(valueChanged(int)),
@@ -255,11 +250,26 @@ void MainWindow::convertion(QString text, QLineEdit *line)
 }
 void MainWindow::update_clines(QString text, QProgressBar *t)
 {
-    t->setMaximum(text.toInt());
+    if(text.isEmpty())
+    {
+        t->setMaximum(1000);
+    }
+    else
+    {
+        t->setMaximum(text.toInt());
+    }
 }
 void MainWindow::update_qlines(QString text, QDial *d)
 {
-    d->setMaximum(text.toInt());
+    if(text.isEmpty())
+    {
+        d->setMaximum(1000);
+    }
+    else
+    {
+        d->setMaximum(text.toInt());
+    }
+    qDebug() << d->maximum();
 }
 double MainWindow::isoverflow(int max, double tv)
 {
