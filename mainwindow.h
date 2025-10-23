@@ -38,8 +38,8 @@ public slots:
     void update_clines(QString text, QProgressBar *t);
     void update_qlines(QString text, QDial *d);
     double isoverflow(int max, double tv);
-    //void change_tank_status(int v);
-    //void update_status(int v);
+    void change_text_enable2(Qt::CheckState check);
+    void change_text_enable3(Qt::CheckState check);
 
     //prueba
     void TestTimer();

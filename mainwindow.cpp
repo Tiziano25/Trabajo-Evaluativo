@@ -20,6 +20,14 @@ MainWindow::MainWindow(QWidget *parent)
             SIGNAL(timeout()),
             this,
             SLOT(UpdateTanks()));
+    connect(ui->enable_t2,
+            SIGNAL(checkStateChanged(Qt::CheckState)),
+            this,
+            SLOT(change_text_enable2(Qt::CheckState)));
+    connect(ui->enable_t3,
+            SIGNAL(checkStateChanged(Qt::CheckState)),
+            this,
+            SLOT(change_text_enable3(Qt::CheckState)));
     //LCDs
     connect(ui->q1,
             SIGNAL(valueChanged(int)),
@@ -115,12 +123,9 @@ void MainWindow::activacion(Qt::CheckState check)
     if(check==2)
     {
         ui->start->setText("Parar");
-        timer.start(100);
+        timer.start(1000);
         ui->capacity1->setReadOnly(true);
         ui->actionOpen_file->setChecked(true);
-        if(ui->actionOpen_file->isChecked() == true){
-            ui->tank1->setValue(100);
-        }
 
         ui->q1_max->setReadOnly(true);
         ui->q1->setEnabled(true);
@@ -150,9 +155,10 @@ void MainWindow::activacion(Qt::CheckState check)
 void MainWindow::UpdateTanks()
 {
     //tanque principal
-    double qin1 = ui->q1->value()/36000.0;
-    double qout1 = ui->q2->value()/36000.0;
+    double qin1 = ui->q1->value()/3600.0;
+    double qout1 = ui->q2->value()/3600.0;
     tank_value1 = tank_value1 + qin1 - qout1;
+    tank_value1 = isoverflow(ui->tank1->maximum(), tank_value1);
     ui->tank1->setValue(tank_value1);
     check_qouts(tank_value1, ui->tank1->maximum(), ui->q2);
     check_qins(tank_value1, ui->tank1->maximum(), ui->q1);
@@ -192,14 +198,14 @@ void MainWindow::UpdateTanks()
             qin3 = 0;
         }
     }
-    double qout2 = ui->q3->value()/36000.0;
-    double qout3 = ui->q4->value()/36000.0;
+    double qout2 = ui->q3->value()/3600.0;
+    double qout3 = ui->q4->value()/3600.0;
     tank_value2 = tank_value2 + qin2 - qout2;
     tank_value3 = tank_value3 + qin3 - qout3;
-    ui->tank2->setValue(tank_value2);
-    ui->tank3->setValue(tank_value3);
     tank_value2 = isoverflow(ui->tank2->maximum(), tank_value2);
     tank_value3 = isoverflow(ui->tank3->maximum(), tank_value3);
+    ui->tank2->setValue(tank_value2);
+    ui->tank3->setValue(tank_value3);
     check_qouts(tank_value2,ui->tank2->maximum(),ui->q3);
     check_qouts(tank_value3,ui->tank3->maximum(),ui->q4);
 }
@@ -217,7 +223,6 @@ void MainWindow::check_qouts(double tv, double max, QDial *dial)
 }
 void MainWindow::check_qins(double tv, int max, QDial *dial)
 {
-    tv = isoverflow(max, tv);
     if(tv == max)
     {
         dial->setEnabled(false);
@@ -269,7 +274,6 @@ void MainWindow::update_qlines(QString text, QDial *d)
     {
         d->setMaximum(text.toInt());
     }
-    qDebug() << d->maximum();
 }
 double MainWindow::isoverflow(int max, double tv)
 {
@@ -278,16 +282,37 @@ double MainWindow::isoverflow(int max, double tv)
         tv = max;
         return tv;
     }
+    else if(tv <= 0)
+    {
+        return 0;
+    }
     else
     {
         return tv;
     }
 }
-
-/*void MainWindow::change_tank_status(int v)
+void MainWindow::change_text_enable2(Qt::CheckState check)
 {
-
-}*/
+    if(check==2)
+    {
+        ui->enable_t2->setText("Deshabilitar");
+    }
+    else if(check==0)
+    {
+        ui->enable_t2->setText("Habilitar");
+    }
+}
+void MainWindow::change_text_enable3(Qt::CheckState check)
+{
+    if(check==2)
+    {
+        ui->enable_t3->setText("Deshabilitar");
+    }
+    else if(check==0)
+    {
+        ui->enable_t3->setText("Habilitar");
+    }
+}
 
 //Prueba
 void MainWindow::TestTimer()
@@ -435,7 +460,10 @@ void MainWindow::save_file_as()
         curFile = filename;
         save_file();
     }
-    timer.start(100);
+    if(ui->start->isChecked())
+    {
+        timer.start(1000);
+    }
 }
 
 void MainWindow::open_file()
